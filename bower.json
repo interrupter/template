@@ -1,0 +1,26 @@
+{
+  "name": "notTemplate",
+  "main": "notTemplate.js",
+  "version": "0.1.2",
+  "homepage": "https://github.com/interrupter/template",
+  "authors": [
+    "interrupter"
+  ],
+  "description": "Simple JS template engine.",
+  "keywords": [
+    "template",
+    "front-end",
+    "frontend",
+    "engine",
+    "json",
+    "simple"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
