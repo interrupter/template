@@ -3,29 +3,32 @@ Simple JS template engine
 
 
 #owerview
-
+```
  data-not-[hereProccessorExpression]="[hereAttributeExpression]"
-
+```
  result of attribute expression will be handed to proccessor with additional params if they defined in proccessor expression
  proccessor is just function inside notTemplate.prototype.proccessorsLib
 
 #few standart variants
 
  add class to element if condition is true
-
+```
  data-not-addClass-[nameOfClass]-if="[:nameOfItemFieldFlag|:nameOfItemFunction()|::nameOfHelpersFieldFlag|::nameOfHelpersFunction()]"
-
+```
  insert in element data of item.title
-
+```
  data-not-provider="[someAttributeExpression]"
-
- will insert into element CAPITALIZED title, capitalize will be in input.params array
+```
+ will insert into element CAPITALIZED title, 'capitalize' will be in input.params array
  for better understanding take a look in notTemplate.js
-
+```
  data-not-provider-capitalize=":title"
-
+```
  way to perfom your own more complex proccessing
+
+```
  data-not-[mySuperFunction]-[param1]-[param2]...-[if]="[:nameOfField|:nameOfFunction()|::nameOfField|::nameOfFunction()]"
+```
 
  mySuperFunction should be in notTemplate.prototype.proccessorsLib object, with name in lower case only
 
@@ -59,10 +62,11 @@ Simple JS template engine
 #templates
 
  Should be defined inside html file or what ever place jquery selector engine can find it
+```html
  <notTemplate data-notTemplate-name="[nameOfTemplate]">
      html of template here
  </notTemplate>
-
+```
 #Final complex examle
 
  Define template right in your html page
