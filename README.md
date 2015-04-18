@@ -61,6 +61,7 @@ Simple JS template engine
  # Final complex examle
 
  Define template right in your html page
+```html
  <dotTemplate data-notTemplate-name="manyTemplate">
         <div class="col-6 col-sm-6 col-lg-4">
             <h2 data-not-provider=":title"></h2>
@@ -68,11 +69,12 @@ Simple JS template engine
             <p><a class="btn btn-default" href="#" role="button">View details &raquo;</a></p>
         </div>
     </dotTemplate>
-
+```
  Define container element where result should be inserted
-
+```html
  <div class="row" id="manyElements"></div>
-
+```
+```javascript
  var data = [
     {title: 'title 1', body: 'body 1', authorName: 'me', new: true },
     {title: 'title 2', body: 'body 2', authorName: 'me', new: true },
@@ -87,3 +89,4 @@ Simple JS template engine
 
 var manyElementsContent = (new notTemplate('manyTemplate', dataSetArray)).exec();
 $('#manyElements').append(manyElementsContent);
+```
