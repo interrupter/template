@@ -9,7 +9,7 @@ Simple JS template engine
  result of attribute expression will be handed to proccessor with additional params if they defined in proccessor expression
  proccessor is just function inside notTemplate.prototype
 
- #few standart variants
+#few standart variants
 
  add class to element if condition is true
 
@@ -28,37 +28,40 @@ Simple JS template engine
  data-not-[mySuperFunction]-[param1]-[param2]...-[if]="[:nameOfField|:nameOfFunction()|::nameOfField|::nameOfFunction()]"
 
 
- #syntax in attributes Expressions
+#syntax in attributes Expressions
+
  : - grants access to current item property or function
  :: - grants access to helpers property or function
 
  ! expression parsed, but not evaluted. You can access only to direct properties or functions.
  ! if you need sub-something, add function in helpers, that will do it.
 
+```
  :[something] - try to insert item.something
  :[something]() - try to insert result of item.something()
  ::[something] - try to insert helpers.something
  ::[something]() - try to insert result of helpers.something(item)
+```
 
- #helpers
+#helpers
 
  helpers - object with data or functions
-
+```javascript
  var helpers = {
     falseIfIndex: 10,
     getFalseOn: function(item, index){
         return this.falseIfIndex!==index;
     },
  };
-
- #templates
+```
+#templates
 
  Should be defined inside html file or what ever place jquery selector engine can find it
  <notTemplate data-notTemplate-name="[nameOfTemplate]">
      html of template here
  </notTemplate>
 
- # Final complex examle
+#Final complex examle
 
  Define template right in your html page
 ```html
@@ -71,9 +74,13 @@ Simple JS template engine
     </dotTemplate>
 ```
  Define container element where result should be inserted
+
 ```html
  <div class="row" id="manyElements"></div>
 ```
+
+Code to make it all work
+
 ```javascript
  var data = [
     {title: 'title 1', body: 'body 1', authorName: 'me', new: true },
