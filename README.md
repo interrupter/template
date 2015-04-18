@@ -7,7 +7,7 @@ Simple JS template engine
  data-not-[hereProccessorExpression]="[hereAttributeExpression]"
 
  result of attribute expression will be handed to proccessor with additional params if they defined in proccessor expression
- proccessor is just function inside notTemplate.prototype
+ proccessor is just function inside notTemplate.prototype.proccessorsLib
 
 #few standart variants
 
@@ -26,6 +26,8 @@ Simple JS template engine
 
  way to perfom your own more complex proccessing
  data-not-[mySuperFunction]-[param1]-[param2]...-[if]="[:nameOfField|:nameOfFunction()|::nameOfField|::nameOfFunction()]"
+
+ mySuperFunction should be in notTemplate.prototype.proccessorsLib object, with name in lower case only
 
 
 #syntax in attributes Expressions
