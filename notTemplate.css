@@ -1,3 +1,6 @@
-dotTemplate {
-    display: none;
+div[data-notTemplate-name] {
+    display: none!important;
+    show: false!important;
+    width:0px!important;
+    height: 0px!important;
 }
