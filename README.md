@@ -62,10 +62,11 @@ Simple JS template engine
 #templates
 
  Should be defined inside html file or what ever place jquery selector engine can find it
+ Or in plain html file.
 ```html
- <notTemplate data-notTemplate-name="[nameOfTemplate]">
+ <div data-notTemplate-name="[nameOfTemplate]">
      html of template here
- </notTemplate>
+ </div>
 ```
 #Final complex examle
 
@@ -100,6 +101,19 @@ Code to make it all work
     getTags: function(item, index){ return item.tags.join(', ');}
  };
 
-var manyElementsContent = (new notTemplate('manyTemplate', dataSetArray)).exec();
+var manyElementsContent = (new notTemplate({templateName: 'manyTemplate', data: dataSetArray})).exec();
 $('#manyElements').append(manyElementsContent);
 ```
+
+If you want place template in html file, you can access to it like this
+
+```
+var urlToHTMLTemplate = 'path/filename.html';
+var afterExecCallback = function(elements){
+    $('#manyElements').append(elements);
+}
+var manyElementsContent = (new notTemplate({templateURL: urlToHTMLTemplate, data: dataSetArray})).exec(afterExecCallback);
+```
+
+You can use callbacks for inline html templates to, but if it not defined, resulting elements set wil be returned;
+

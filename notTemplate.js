@@ -18,10 +18,7 @@ jQuery.extend(jQuery.expr[':'], {
  *
  * */
 
-var notTemplate = function (templateName, //css selector of template
-    data, //array of objects or object with data
-    helpers //object with helper functions,
-) {
+var notTemplate = function (input) {
     this._notOptions = {
         proccessorIndexAttributeName: 'data-notTemplate-proccindex',
         proccessorExpressionPrefix: 'data-not-',
@@ -31,15 +28,18 @@ var notTemplate = function (templateName, //css selector of template
         attributeExpressionHelpersPrefix: '::',
         attributeExpressionFunctionPostfix: '()',
         attributeExpressionDefaultResult: false,
-        repeat: data instanceof Array,
-        data: data,
-        selector: templateName,
-        templateElement: $('[data-notTemplate-name="'+templateName+'"]').clone(true, true),
-        helpers: helpers,
+        repeat: (input.data) instanceof Array,
+        data: input.data,
+        selector: input.templateName,
+        templateElement: input.hasOwnProperty('templateName') ? $('[data-notTemplate-name="' + input.templateName + '"]').clone(true, true) : '',
+        templateURL: input.hasOwnProperty('templateURL') ? input.templateURL : '',
+        helpers: input.helpers,
     };
 
     this._working = {
         proccessors: [],
+        templateHTML: '',
+        templateLoaded: input.hasOwnProperty('templateName'),
         result: null,
         currentEl: null,
         currentItem: null,
@@ -48,8 +48,7 @@ var notTemplate = function (templateName, //css selector of template
     return this;
 }
 
-notTemplate.prototype.exec = function () {
-    console.log('exec', this);
+notTemplate.prototype._exec = function () {
     if (this._notOptions.repeat) {
         this._proccessItems();
     } else {
@@ -58,14 +57,41 @@ notTemplate.prototype.exec = function () {
         this._proccessItem();
         this._working.result = this._working.currentEl.children();
     }
-    return this._working.result;
+}
+
+notTemplate.prototype.exec = function (afterExecCallback) {
+    //from local html data
+    var that = this;
+    if (that._working.templateLoaded) {
+        that._exec();
+        if (typeof afterExecCallback == 'undefined') {
+            return that._working.result;
+        } else {
+            afterExecCallback(that._working.result);
+        }
+    }
+    //from template html file, thru ajax request
+    else {
+        $.ajax({
+            url: that._notOptions.templateURL,
+            dataType: 'html',
+            success: function(html){
+                var div = $('<div></div>').attr('data-notTemplate-name', that._notOptions.templateURL).append(html);
+                $(document.body).append(div);
+                that._working.templateLoaded = true;
+                that._notOptions.templateElement = div;
+                that._exec();
+                if (typeof afterExecCallback !== 'undefined')afterExecCallback(that._working.result);
+            }
+        });
+    }
 }
 
 notTemplate.prototype._proccessItems = function () {
-    console.log('proccessItems');
+    //console.log('proccessItems');
     var i;
     this._working.result = [];
-    for(i = 0; i < this._notOptions.data.length; i++){
+    for (i = 0; i < this._notOptions.data.length; i++) {
         this._working.currentIndex = i;
         this._working.currentItem = this._notOptions.data[i];
         this._proccessItem();
@@ -74,11 +100,11 @@ notTemplate.prototype._proccessItems = function () {
 }
 
 notTemplate.prototype._proccessItem = function () {
-    console.log('proccessItem');
+    //console.log('proccessItem');
     this._working.currentEl = this._notOptions.templateElement.clone(true, true);
     this._findAllTemplateProccessors();
     this._execProccessorsOnCurrent();
-    console.log(this._working.currentEl.html());
+    // console.log(this._working.currentEl.html());
 }
 
 //search for proccessors in template, and prepare preInput objects for each
@@ -90,7 +116,7 @@ notTemplate.prototype._findAllTemplateProccessors = function () {
     for (j = 0; j < elsWithProc.length; j++) {
         for (var i = 0, atts = elsWithProc[j].attributes, n = atts.length; i < n; i++) {
             if (atts[i].nodeName.indexOf(this._notOptions.proccessorExpressionPrefix) === 0) {
-                console.log(atts[i]);
+                // console.log(atts[i]);
                 var procData = this._parseProccessorExpression(atts[i].nodeName);
                 procData.element = $(elsWithProc[j]);
                 procData.proccessorExpression = atts[i].nodeName;
@@ -99,7 +125,7 @@ notTemplate.prototype._findAllTemplateProccessors = function () {
             }
         }
     }
-    console.log('arrange proccessors', this._working.proccessors);
+    //console.log('arrange proccessors', this._working.proccessors);
 };
 
 notTemplate.prototype._parseProccessorExpression = function (proccessorExpression) {
@@ -152,10 +178,10 @@ notTemplate.prototype._execProccessorsOnCurrent = function () {
     console.log('exec proccessors on current');
     for (i = 0; i < this._working.proccessors.length; i++) {
         this._working.proccessors[i].attributeResult = this._getAttributeExpressionResult(this._working.proccessors[i].attributeExpression, this._working.currentItem, this._working.currentIndex);
-        if (this.proccessorsLib.hasOwnProperty(this._working.proccessors[i].proccessorName)){
+        if (this.proccessorsLib.hasOwnProperty(this._working.proccessors[i].proccessorName)) {
             this.proccessorsLib[this._working.proccessors[i].proccessorName](this._working.proccessors[i]);
             this._working.proccessors[i].element.removeAttr(this._working.proccessors[i].proccessorExpression);
-            console.log(this._working.proccessors[i].proccessorExpression,this._working.proccessors[i].element.html());
+            //console.log(this._working.proccessors[i].proccessorExpression,this._working.proccessors[i].element.html());
         }
     }
 }
@@ -183,15 +209,12 @@ notTemplate.prototype._execProccessorOnCurrentElement = function (proccessor) {
 notTemplate.prototype.proccessorsLib = {
     provider: function (input) {
         'use strict';
-        if (input.params.indexOf('capitalize')>-1) input.attributeResult = input.attributeResult.toUpperCase();
+        if (input.params.indexOf('capitalize') > -1) input.attributeResult = input.attributeResult.toUpperCase();
         input.element.append(input.attributeResult);
     },
-    addclass: function(input){
-        if (input.attributeResult){
+    addclass: function (input) {
+        if (input.attributeResult) {
             input.element.addClass(input.params[0]);
         }
     }
 };
-
-
-
