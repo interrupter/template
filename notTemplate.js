@@ -32,8 +32,9 @@ var notTemplate = function (input) {
         data: input.data,
         place: input.place,
         selector: input.templateName,
-        templateElement: input.hasOwnProperty('templateName') ? $('[data-notTemplate-name="' + input.templateName + '"]').clone(true, true) : '',
-        templateURL: input.hasOwnProperty('templateURL') ? input.templateURL : '',
+        template: input.hasOwnProperty('template')?input.template:null,
+        templateElement: input.hasOwnProperty('templateName') ? $('[data-notTemplate-name="' + input.templateName + '"]').clone(true, true) : null,
+        templateURL: input.hasOwnProperty('templateURL') ? input.templateURL : null,
         helpers: input.helpers,
     };
 
@@ -41,8 +42,8 @@ var notTemplate = function (input) {
 
     this._working = {
         proccessors: [],
-        templateHTML: '',
-        templateLoaded: input.hasOwnProperty('templateName'),
+        templateHTML: input.hasOwnProperty('template')?input.template:'',
+        templateLoaded: input.hasOwnProperty('templateName')||input.hasOwnProperty('template'),
         result: null,
         currentEl: null,
         currentItem: null,
@@ -108,9 +109,19 @@ notTemplate.prototype._proccessItems = function () {
     }
 }
 
+notTemplate.prototype._getTemplateElement = function(){
+    if (this._notOptions.template === null){
+        return this._notOptions.templateElement.clone(true, true)
+    }
+    else{
+        return $(this._notOptions.template);
+    }
+
+};
+
 notTemplate.prototype._proccessItem = function () {
     //console.log('proccessItem');
-    this._working.currentEl = this._notOptions.templateElement.clone(true, true);
+    this._working.currentEl = this._getTemplateElement();
     this._findAllTemplateProccessors();
     this._execProccessorsOnCurrent();
     // console.log(this._working.currentEl.html());
