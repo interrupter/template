@@ -27,14 +27,17 @@ var notTemplate = function (input) {
         attributeExpressionItemPrefix: ':',
         attributeExpressionHelpersPrefix: '::',
         attributeExpressionFunctionPostfix: '()',
-        attributeExpressionDefaultResult: false,
+        attributeExpressionDefaultResult: '',
         repeat: (input.data) instanceof Array,
         data: input.data,
+        place: input.place,
         selector: input.templateName,
         templateElement: input.hasOwnProperty('templateName') ? $('[data-notTemplate-name="' + input.templateName + '"]').clone(true, true) : '',
         templateURL: input.hasOwnProperty('templateURL') ? input.templateURL : '',
         helpers: input.helpers,
     };
+
+    console.log('data', input.data);
 
     this._working = {
         proccessors: [],
@@ -77,14 +80,20 @@ notTemplate.prototype.exec = function (afterExecCallback) {
             dataType: 'html',
             success: function(html){
                 var div = $('<div></div>').attr('data-notTemplate-name', that._notOptions.templateURL).append(html);
-                $(document.body).append(div);
                 that._working.templateLoaded = true;
                 that._notOptions.templateElement = div;
                 that._exec();
-                if (typeof afterExecCallback !== 'undefined')afterExecCallback(that._working.result);
+                if (typeof afterExecCallback !== 'undefined') afterExecCallback(that._working.result);
             }
         });
     }
+}
+
+notTemplate.prototype.execAndPut = function(place,afterExecCallback){
+    this.exec(function(el){
+        place.empty().append(el);
+        if (typeof afterExecCallback !== 'undefined') afterExecCallback(el);
+    });
 }
 
 notTemplate.prototype._proccessItems = function () {
@@ -161,14 +170,15 @@ notTemplate.prototype._getAttributeExpressionResult = function (expression, item
         .replace(this._notOptions.attributeExpressionItemPrefix, '') //--//--//--//--//- remove :
         .replace(this._notOptions.attributeExpressionFunctionPostfix, ''); //--//--//--//--//- remove ()
 
-    if (!isHelpers && !isItem) {
+    if ((!isHelpers && !isItem) || (runner==null || typeof runner =='undefined')) {
         return expression;
     }
 
     if (isFunction) {
         result = (runner.hasOwnProperty(fieldName) ? runner[fieldName](item, index) : this._notOptions.attributeExpressionDefaultResult);
     } else {
-        result = (runner.hasOwnProperty(fieldName) ? runner[fieldName] : this._notOptions.attributeExpressionDefaultResult);
+        console.log(runner[fieldName]);
+        result = ((typeof runner[fieldName]!== 'undefined') ? runner[fieldName] : this._notOptions.attributeExpressionDefaultResult);
     }
     return result;
 };
@@ -179,15 +189,11 @@ notTemplate.prototype._execProccessorsOnCurrent = function () {
     for (i = 0; i < this._working.proccessors.length; i++) {
         this._working.proccessors[i].attributeResult = this._getAttributeExpressionResult(this._working.proccessors[i].attributeExpression, this._working.currentItem, this._working.currentIndex);
         if (this.proccessorsLib.hasOwnProperty(this._working.proccessors[i].proccessorName)) {
-            this.proccessorsLib[this._working.proccessors[i].proccessorName](this._working.proccessors[i]);
+            this.proccessorsLib[this._working.proccessors[i].proccessorName](this._working.proccessors[i], this._working.currentItem,this._notOptions.helpers);
             this._working.proccessors[i].element.removeAttr(this._working.proccessors[i].proccessorExpression);
             //console.log(this._working.proccessors[i].proccessorExpression,this._working.proccessors[i].element.html());
         }
     }
-}
-
-notTemplate.prototype._execProccessorOnCurrentElement = function (proccessor) {
-    var i;
 }
 
 
@@ -216,5 +222,30 @@ notTemplate.prototype.proccessorsLib = {
         if (input.attributeResult) {
             input.element.addClass(input.params[0]);
         }
+    },
+    value: function (input) {
+        console.log('value', input);
+        input.element.val(input.attributeResult);
+    },
+    checked: function (input) {
+        console.log('checked', input);
+        if (input.attributeResult) {
+            input.element.prop('checked', true);
+        }else{
+            input.element.prop('checked', false);
+        }
+        console.log(input);
+    },
+    bind: function (input, item, helpers) {
+        var that = this;
+        console.log('bind', input);
+        input.element.on(input.params[0], function(e){
+            e.stopImmediatePropagation();
+            if (typeof helpers!=='undefined' && helpers!== null && helpers.hasOwnProperty(input.attributeResult)){
+                helpers[input.attributeResult](item);
+            }
+            return false;
+        });
     }
+
 };
