@@ -1,7 +1,7 @@
 {
   "name": "notTemplate",
   "main": "notTemplate.js",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://github.com/interrupter/template",
   "authors": [
     "interrupter"
