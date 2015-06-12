@@ -229,6 +229,10 @@ notTemplate.prototype.proccessorsLib = {
         if (input.params.indexOf('capitalize') > -1) input.attributeResult = input.attributeResult.toUpperCase();
         input.element.append(input.attributeResult);
     },
+    attr: function(input){
+        'use strict';
+        input.element.attr(input.params[0],input.attributeResult);
+    },
     addclass: function (input) {
         if (input.attributeResult) {
             input.element.addClass(input.params[0]);
