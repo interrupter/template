@@ -61,6 +61,13 @@
         <p data-not-provider=":body"></p>
     </div>
 
+    <div data-notTemplate-name="selectTemplate">
+        <div class="col-6 col-sm-6 col-lg-4">
+            <span data-not-provider=":title"></span>
+            <select data-not-attr-name=":name" data-not-attr-value=":value" data-not-options-title-_id="::options"></select>
+        </div>
+    </div>
+
     <div data-notTemplate-name="manyTemplate">
         <div class="col-6 col-sm-6 col-lg-4">
             <h2 data-not-provider=":title"></h2>
@@ -78,6 +85,7 @@
                     <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
                 </p>
                 <div class="jumbotron" id="singleElement"></div>
+                <div class="row" id="selectElement"></div>
                 <div class="row" id="manyElements"></div>
                 <!--/row-->
             </div>

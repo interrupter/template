@@ -229,6 +229,24 @@ notTemplate.prototype.proccessorsLib = {
         if (input.params.indexOf('capitalize') > -1) input.attributeResult = input.attributeResult.toUpperCase();
         input.element.append(input.attributeResult);
     },
+    options: function (input, item) {
+        'use strict';
+        var i = 0, option = null, valueFieldName = 'value', labelFieldName = 'name',itemValueFieldName = 'value';
+        if (input.params.length === 2){
+            labelFieldName = input.params[0];
+            valueFieldName = input.params[1];
+        }
+        if (input.params.length === 3){
+            itemValueFieldName = input.params[2];
+        }
+        for(i=0; i<input.attributeResult.length; i++){
+            option = $('<option></option>').attr('value', input.attributeResult[i][valueFieldName]).text(input.attributeResult[i][labelFieldName]);
+            if (item[itemValueFieldName] === input.attributeResult[i][valueFieldName]){
+                option.prop('selected', true);
+            }
+            input.element.append(option);
+        }
+    },
     attr: function(input){
         'use strict';
         input.element.attr(input.params[0],input.attributeResult);
