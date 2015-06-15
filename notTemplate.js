@@ -243,6 +243,10 @@ notTemplate.prototype.proccessorsLib = {
         if (input.params.length === 3){
             itemValueFieldName = input.params[2];
         }
+        if (helpers.hasOwnProperty('fieldPlaceHolder')){
+            option = $('<option></option>').attr('value', null).text(helpers.fieldPlaceHolder);
+            input.element.append(option);
+        }
         for(i=0; i<input.attributeResult.length; i++){
             option = $('<option></option>').attr('value', input.attributeResult[i][valueFieldName]).text(input.attributeResult[i][labelFieldName]);
             if (item[itemValueFieldName] === input.attributeResult[i][valueFieldName]){
